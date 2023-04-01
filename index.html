@@ -89,6 +89,7 @@
       text-shadow: 0px 27px 60px rgba(0, 0, 0, 0.43), 0px 13.5132px 30.0293px rgba(0, 0, 0, 0.326943), 0px 8.13971px 18.0882px rgba(0, 0, 0, 0.280183), 0px 5.21635px 11.5919px rgba(0, 0, 0, 0.245485), 0px 3.38082px 7.51293px rgba(0, 0, 0, 0.215), 0px 2.12819px 4.72931px rgba(0, 0, 0, 0.184515), 0px 1.22278px 2.71728px rgba(0, 0, 0, 0.149817), 0px 0.538175px 1.19595px rgba(0, 0, 0, 0.103057);
     }
 
+
     .album-art {
       height: 100%;
       margin-right: 2rem;
@@ -101,7 +102,16 @@
     }
 
     .album-info-text {
-      max-width: 50%;
+      width: 100%;
+    }
+
+    .album-info-text>* {
+      pointer-events: auto !important;
+      width: 100%;
+    }
+
+    .album-info-text>*::selection {
+      background-color: rgba(255, 255, 255, 0.2)
     }
 
     .album-releasedate {
@@ -121,6 +131,43 @@
       filter: drop-shadow(0px 7px 30px rgba(0, 0, 0, 0.8));
     }
 
+    .about {
+      color: white;
+      font-size: 2.5rem;
+      position: absolute;
+      right: 4rem;
+      top: 4rem;
+      text-underline-offset: 0.2rem;
+      text-decoration-thickness: 0.25rem !important;
+      pointer-events: auto;
+    }
+
+    .about-page {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: black;
+      pointer-events: auto;
+      overflow: auto;
+      /* IE and Edge */
+      -ms-overflow-style: none;
+      /* Firefox */
+      scrollbar-width: none;
+    }
+
+    .about-page::-webkit-scrollbar {
+      display: none;
+    }
+
+    .about-text {
+      padding: 4rem;
+      color: white;
+      font-size: 2.5rem;
+      max-width: 60vw;
+    }
+
     .center-country {
       margin-right: auto;
       display: flex;
@@ -132,8 +179,9 @@
       display: flex;
       align-items: end;
       text-decoration: underline;
-      text-underline-offset: 0.2rem;
-      text-decoration-thickness: 0.45rem;
+      text-underline-offset: 0.25rem;
+      text-decoration-thickness: 0.4rem;
+      cursor: pointer;
     }
 
     #login,
@@ -156,6 +204,12 @@
       top: 0;
     }
 
+    @media only screen and (max-device-width: 1024px) {
+      .interface-wrapper {
+        padding-bottom: 6rem;
+      }
+    }
+
     @media only screen and (max-device-width: 768px) {
       .album-info {
         flex-direction: column;
@@ -163,6 +217,7 @@
 
       .album-art {
         margin-right: 0;
+        margin-bottom: .5rem;
       }
 
       .album-art-image {
@@ -178,8 +233,23 @@
         font-size: 1.5rem;
       }
 
+      .about {
+        top: 2rem;
+        right: 2rem;
+        font-size: 2rem;
+        text-underline-offset: 0.2rem;
+        text-decoration-thickness: 0.17rem !important;
+      }
+
+      .about-text {
+        font-size: 1.2rem;
+        padding: 1rem;
+        max-width: 100%;
+      }
+
       .bottom-text {
         font-size: 2rem;
+        gap: unset;
       }
 
       .interface-wrapper {
@@ -190,12 +260,6 @@
 
       .clickable {
         text-decoration-thickness: 0.18rem;
-      }
-    }
-
-    @media only screen and (max-device-width: 1024px) {
-      .interface-wrapper {
-        padding-bottom: 6rem;
       }
     }
   </style>
@@ -219,6 +283,24 @@
         <div class="album-genres"></div>
         <div class="album-descriptors"></div>
         <div class="current-track"></div>
+      </div>
+    </div>
+    <div class="about clickable">?</div>
+    <div class="about-page" style="display: none;">
+      <div class="about-text">
+        <p>NotWorldMusic showcases one exceptional album from every country around the globe.</p>
+        <p>Why the name?</p>
+        <p>World music as a marketing term for non-Western music was established by the industry in the 80s. In this
+          discriminatory definition it stands for exoticism and Eurocentric thinking. As David Byrne put it: "It's a
+          none too subtle way of reasserting the hegemony of Western pop culture. It ghettoizes most of the world's
+          music. A bold and audacious move, White Man!"</p>
+        <p>How do I listen to the albums?</p>
+        <p>Streaming through the Spotify API was developed, but Spotify did not permit publishing the app with this
+          feature. For now you will have to manually search for the albums.</p>
+        <p>How were the albums selected?</p>
+        <p>Each album represents the best rated album of artists from that country according to the community at
+          rateyourmusic.com.</p>
+
       </div>
     </div>
     <div class="bottom-text">
@@ -422,6 +504,14 @@
 
         // Add button eventlisteners
 
+        // About page
+        document.querySelector('.about').addEventListener('mouseup', function () {
+          document.querySelector('.about-page').style.display = 'block';
+          document.querySelector('.close-button').style.display = 'flex';
+          document.querySelector('.open-button').style.display = 'none';
+          document.querySelector('.center-country').style.display = 'none';
+        })
+
         // Open Button
         document.querySelector('.open-button').addEventListener('click', function () {
           openInfo(centerAlbum, false);
@@ -429,6 +519,9 @@
 
         // Close Button
         document.querySelector('.close-button').addEventListener('click', function () {
+          document.querySelector('.about-page').style.display = 'none';
+          document.querySelector('.center-country').style.display = 'flex';
+
           closeInfo();
         });
 
@@ -555,6 +648,7 @@
           document.querySelector('.close-button').style.display = 'flex';
           document.querySelector('.play-button').style.display = 'none';
           document.querySelector('.now-playing-wrapper').style.display = 'none';
+          document.querySelector('.about').style.display = 'none';
         }
 
         // Close Overlay with album info
@@ -570,6 +664,7 @@
           document.querySelector('.close-button').style.display = 'none';
           document.querySelector('.play-button').style.display = 'none';
           document.querySelector('.open-button').style.display = 'flex';
+          document.querySelector('.about').style.display = 'flex';
 
 
           // Show pause button if currently playing
@@ -580,6 +675,7 @@
 
       });
     })();
+
 
   // Reload page when window is resized
   // Disabled as it was most likely the cause for the site not to work on some phones
