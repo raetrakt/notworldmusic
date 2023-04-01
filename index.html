@@ -384,8 +384,9 @@
 
             // Make albums appear when within center of screen
             maxHeight = .25;
-            falloff = 1.0025; //closer to one means more albums are visible
-            album.alt = maxHeight * (Math.pow(falloff, -distance * distance)) - .1;
+            falloff = 1.004; //closer to one means more albums are visible
+            album.alt = maxHeight * (Math.pow(falloff, -distance * 10)) - .1
+              - (oControls.maxDistance - zoomLevel) / (oControls.minDistance * 35); //show less albums when zoomed in
             // album.alt += maxHeight / 6 * (Math.pow(falloff * 1.1, -distance * distance)); //add extra height for center album
             // Make albums bigger when zoomed out, and tiny when appearing
             album.width = Math.max(1, zoomLevel * zoomLevel * album.alt * .002);
