@@ -19,9 +19,9 @@
   <style type="text/css">
     @font-face {
       font-family: 'Authentic Sans 90';
-      src:  url('./data/fonts/woff/AUTHENTICSans-90.woff2') format('woff2'),
-            url('./data/fonts/woff/AUTHENTICSans-90.woff') format('woff'),
-            url('./data/fonts/otf/AUTHENTICSans-90.otf') format('opentype');
+      src: url('./data/fonts/woff/AUTHENTICSans-90.woff2') format('woff2'),
+        url('./data/fonts/woff/AUTHENTICSans-90.woff') format('woff'),
+        url('./data/fonts/otf/AUTHENTICSans-90.otf') format('opentype');
     }
 
     * {
@@ -35,11 +35,11 @@
       overflow: hidden;
       font-family: 'Authentic Sans 90', 'Neue Helvetica', Helvetica, Arial, sans-serif;
       background-color: black;
-    }  
+    }
 
     .container {
       height: 100vh;
-      width: 100vw;      
+      width: 100vw;
     }
 
     .login-text {
@@ -61,7 +61,7 @@
       pointer-events: none;
       z-index: 100;
     }
-    
+
     .now-playing-wrapper {
       font-size: 3rem;
       color: white;
@@ -79,16 +79,16 @@
 
     .album-info {
       display: flex;
-      top: 3rem; 
+      top: 3rem;
       left: 3rem;
-      height: 60vh; 
+      height: 60vh;
       width: 100%;
       font-size: 2.5rem;
       color: white;
       display: none;
       text-shadow: 0px 27px 60px rgba(0, 0, 0, 0.43), 0px 13.5132px 30.0293px rgba(0, 0, 0, 0.326943), 0px 8.13971px 18.0882px rgba(0, 0, 0, 0.280183), 0px 5.21635px 11.5919px rgba(0, 0, 0, 0.245485), 0px 3.38082px 7.51293px rgba(0, 0, 0, 0.215), 0px 2.12819px 4.72931px rgba(0, 0, 0, 0.184515), 0px 1.22278px 2.71728px rgba(0, 0, 0, 0.149817), 0px 0.538175px 1.19595px rgba(0, 0, 0, 0.103057);
     }
-        
+
     .album-art {
       height: 100%;
       margin-right: 2rem;
@@ -98,7 +98,7 @@
     .album-art-image {
       height: 100%;
       aspect-ratio: 1;
-    }  
+    }
 
     .album-info-text {
       max-width: 50%;
@@ -115,7 +115,7 @@
       display: flex;
       justify-content: flex-end;
       gap: 4rem;
-      pointer-events: auto; 
+      pointer-events: auto;
       user-select: none;
       margin-top: auto;
       filter: drop-shadow(0px 7px 30px rgba(0, 0, 0, 0.8));
@@ -174,7 +174,7 @@
         max-width: 100%;
       }
 
-      .album-info {      
+      .album-info {
         font-size: 1.5rem;
       }
 
@@ -209,7 +209,7 @@
     </div>
     <div class="album-info" style="display: none;">
       <div class="album-art">
-        <img class="album-art-image" src="" >
+        <img class="album-art-image" src="">
         <div class="image-placeholder"></div>
       </div>
       <div class="album-info-text">
@@ -230,359 +230,355 @@
     </div>
   </div>
 
-<div id="globeViz"></div>
+  <div id="globeViz"></div>
 
-<script>
-  // 3D Globe Visulization
-  (function globe () {            
-    // Array that stores information on custom album objects
-    var albumObjectData = [];
-    var selectedAlbum = null;
-    var centerAlbum = null;
-    var isPlaying = false;
-    var pointer = new THREE.Vector2();
-    var openedByClicking = false;
-
-
-    // Load country polygon data before intializing globe
-    fetch('./data/ne_110m_admin_0_countries.geojson').then(res => res.json()).then(countries => {
-
-      // Initialize globe
-      const Globe = new ThreeGlobe({ animateIn: false }) //issue: animate in doesn't work because of lag caused by fetching data 
-        // .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
-        .polygonsData(countries.features.filter(d => d.properties.ISO_A2 !== 'AQ'))
-        .polygonCapColor(() => 'rgba(0, 0, 0, 1)')
-        .polygonSideColor(() => 'rgba(50, 50, 50)')
-        .polygonStrokeColor(() => '#FFF')
-        .showAtmosphere(false)
-        .showGraticules(true)
-        // Add custom layer with album covers
-        .customLayerData(albumObjectData)
-        .customThreeObject(
-          (d) =>
-            new THREE.Mesh(
-              new THREE.PlaneGeometry(1, 1),
-              new THREE.MeshLambertMaterial({
-                map: new THREE.TextureLoader().load("data/spotify_album_covers/" + d.imageUrl),
-              })
-            )
-        )
-        .customThreeObjectUpdate((obj, d) => {
-
-          // Update position of album objects
-          Object.assign(obj.position, Globe.getCoords(d.lat, d.lng, d.alt));
-
-          // Scale album objects according to set width
-          obj.scale.set(d.width, d.width, 1);
-
-          // Hide albums if information overlay is visible
-          if (document.querySelector('.album-info').style.display === 'flex') {
-            obj.scale.set(0, 0, 1);
-          }
-
-          obj.lookAt(new THREE.Vector3(0, 0, 0));
-          obj.rotateY(Math.PI);
-          obj.material.side = THREE.DoubleSide;
-        })
+  <script>
+    // 3D Globe Visulization
+    (function globe() {
+      // Array that stores information on custom album objects
+      var albumObjectData = [];
+      var selectedAlbum = null;
+      var centerAlbum = null;
+      var isPlaying = false;
+      var pointer = new THREE.Vector2();
+      var openedByClicking = false;
 
 
- 
+      // Load country polygon data before intializing globe
+      fetch('./data/ne_110m_admin_0_countries.geojson').then(res => res.json()).then(countries => {
+
+        // Initialize globe
+        const Globe = new ThreeGlobe({ animateIn: false }) //issue: animate in doesn't work because of lag caused by fetching data 
+          // .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
+          .polygonsData(countries.features.filter(d => d.properties.ISO_A2 !== 'AQ'))
+          .polygonCapColor(() => 'rgba(0, 0, 0, 1)')
+          .polygonSideColor(() => 'rgba(50, 50, 50)')
+          .polygonStrokeColor(() => '#FFF')
+          .showAtmosphere(false)
+          .showGraticules(true)
+          // Add custom layer with album covers
+          .customLayerData(albumObjectData)
+          .customThreeObject(
+            (d) =>
+              new THREE.Mesh(
+                new THREE.PlaneGeometry(1, 1),
+                new THREE.MeshLambertMaterial({
+                  map: new THREE.TextureLoader().load("data/spotify_album_covers/" + d.imageUrl),
+                })
+              )
+          )
+          .customThreeObjectUpdate((obj, d) => {
+
+            // Update position of album objects
+            Object.assign(obj.position, Globe.getCoords(d.lat, d.lng, d.alt));
+
+            // Scale album objects according to set width
+            obj.scale.set(d.width, d.width, 1);
+
+            // Hide albums if information overlay is visible
+            if (document.querySelector('.album-info').style.display === 'flex') {
+              obj.scale.set(0, 0, 1);
+            }
+
+            obj.lookAt(new THREE.Vector3(0, 0, 0));
+            obj.rotateY(Math.PI);
+            obj.material.side = THREE.DoubleSide;
+          })
+
+
+
 
         // Loads JSON file with album info
         fetch("./data/album_info.json")
           .then((res) => res.json())
           .then((albums) => {
-          // Create object with data for each album
-          // Issue: Reading directly from JSON would be more efficient?
-          for (let key in albums) {
-            albumObjectData.push({
-              name: albums[key].country_name,
-              lat: albums[key].latitude,
-              lng: albums[key].longitude,
-              alt: 0.1,
-              width: 1,
-              imageUrl: albums[key].image_name,
-              uri: albums[key].uri,
-              album_title: albums[key].album_title,
-              album_artist: albums[key].album_artist,
-              album_releasedate: albums[key].album_releasedate,
-              album_genres: albums[key].album_genres,
-              album_descriptors: albums[key].album_descriptors
-            });
+            // Create object with data for each album
+            // Issue: Reading directly from JSON would be more efficient?
+            for (let key in albums) {
+              albumObjectData.push({
+                name: albums[key].country_name,
+                lat: albums[key].latitude,
+                lng: albums[key].longitude,
+                alt: 0.1,
+                width: 1,
+                imageUrl: albums[key].image_name,
+                uri: albums[key].uri,
+                album_title: albums[key].album_title,
+                album_artist: albums[key].album_artist,
+                album_releasedate: albums[key].album_releasedate,
+                album_genres: albums[key].album_genres,
+                album_descriptors: albums[key].album_descriptors
+              });
+            }
+
+            // Update globe with new data from albums
+            Globe.customLayerData(Globe.customLayerData());
+          });
+
+
+
+        // Custom globe material, doesn't really work as expected but removes specular highlight
+        const globeMaterial = Globe.globeMaterial();
+        globeMaterial.specular = 0;
+        // globeMaterial.color = new THREE.Color('white');
+        // globeMaterial.bumpScale = 10;
+        new THREE.TextureLoader().load('//unpkg.com/three-globe/example/img/earth-water.png', texture => {
+          // globeMaterial.specularMap = texture;
+          // globeMaterial.specular = new THREE.Color('white');
+          globeMaterial.shininess = 0;
+        });
+
+
+        // setTimeout(() => Globe.polygonAltitude(() => Math.random()), 4000);
+
+        // Setup renderer
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('globeViz').appendChild(renderer.domElement);
+
+        // Setup scene
+        const scene = new THREE.Scene();
+        scene.add(Globe);
+        scene.add(new THREE.AmbientLight(0xffffff));
+
+        // scene.add(new THREE.DirectionalLight(0xffffff, 0.6));
+
+        // Setup camera
+        const camera = new THREE.PerspectiveCamera();
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        camera.position.z = 500;
+        camera.fov = 50;
+        camera.updateProjectionMatrix();
+        // console.log(camera.fov);
+
+        // Add camera controls
+        const oControls = new THREE.OrbitControls(camera, renderer.domElement);
+        oControls.minDistance = 130;
+        oControls.maxDistance = 300;
+        oControls.rotateSpeed = .25;
+        oControls.zoomSpeed = .4;
+        oControls.enablePan = false;
+        oControls.screenSpacePanning = true;
+        oControls.enableDamping = true;
+        oControls.dampingFactor = .15; // 0-1, 1 means no easing
+        // oControls.dynamicDampingFactor = 1;
+
+
+
+        // Move albums, appearing based on rotation
+        // Might make sense to merge this loop with renderer loop animate()?
+        (function moveAlbums() {
+          cameraVector = new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z);
+          cameraLatLong = Globe.toGeoCoords(camera.position);
+          cameraPositionOnGlobe = Globe.getCoords(cameraLatLong.lat, cameraLatLong.lng);
+          cameraOnGlobeVector = new THREE.Vector3(cameraPositionOnGlobe.x, cameraPositionOnGlobe.y, cameraPositionOnGlobe.z);
+          zoomLevel = cameraVector.distanceTo(new THREE.Vector3(0, 0, 0));
+
+          // Loop through albums
+          albumObjectData.forEach(function (album) {
+            albumCoords = Globe.getCoords(album.lat, album.lng);
+            albumVector = new THREE.Vector3(albumCoords.x, albumCoords.y, albumCoords.z);
+
+            distance = cameraOnGlobeVector.distanceTo(albumVector);
+
+            // Make albums appear when within center of screen
+            maxHeight = .25;
+            falloff = 1.0025; //closer to one means more albums are visible
+            album.alt = maxHeight * (Math.pow(falloff, -distance * distance)) - .1;
+            // album.alt += maxHeight / 6 * (Math.pow(falloff * 1.1, -distance * distance)); //add extra height for center album
+            // Make albums bigger when zoomed out, and tiny when appearing
+            album.width = Math.max(1, zoomLevel * zoomLevel * album.alt * .002);
+          });
+
+          // Display name of centermost album
+          var highestAlt = Math.max.apply(Math, albumObjectData.map(function (album) { return album.alt; }));
+          centerAlbum = albumObjectData.find(function (album) { return album.alt == highestAlt; });
+          var countryNameDiv = document.querySelector('.center-country');
+          if (centerAlbum && countryNameDiv.innerText != centerAlbum.name && !openedByClicking) { document.querySelector('.center-country').innerText = centerAlbum.name; }
+
+          // Hide interface if no album is visible
+          let interface = document.querySelector(".bottom-text")
+          if (highestAlt < 0.01 && document.querySelector(".album-info").style.display == 'none') {
+            interface.style.display = 'none'
+          } else {
+            interface.style.display = 'flex';
           }
 
-          // Update globe with new data from albums
           Globe.customLayerData(Globe.customLayerData());
+          requestAnimationFrame(moveAlbums);
+        })();
+
+        // Kick-off renderer loop
+        (function animate() { // IIFE
+          // Frame cycle
+          oControls.rotateSpeed = .000006 * Math.pow(oControls.getDistance(), 2); //rotate slower when zoomed in, rotate faster when zoomed out
+          // console.log(oControls.rotateSpeed);
+          oControls.update();
+          renderer.render(scene, camera);
+          requestAnimationFrame(animate);
+        })();
+
+        // Add button eventlisteners
+
+        // Open Button
+        document.querySelector('.open-button').addEventListener('click', function () {
+          openInfo(centerAlbum, false);
         });
 
-
-
-      // Custom globe material, doesn't really work as expected but removes specular highlight
-      const globeMaterial = Globe.globeMaterial();
-      globeMaterial.specular = 0;
-      // globeMaterial.color = new THREE.Color('white');
-      // globeMaterial.bumpScale = 10;
-      new THREE.TextureLoader().load('//unpkg.com/three-globe/example/img/earth-water.png', texture => {
-        // globeMaterial.specularMap = texture;
-        // globeMaterial.specular = new THREE.Color('white');
-        globeMaterial.shininess = 0;
-      });
-
-
-      // setTimeout(() => Globe.polygonAltitude(() => Math.random()), 4000);
-
-      // Setup renderer
-      const renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      document.getElementById('globeViz').appendChild(renderer.domElement);
-
-      // Setup scene
-      const scene = new THREE.Scene();
-      scene.add(Globe);
-      scene.add(new THREE.AmbientLight(0xffffff));
-
-      // scene.add(new THREE.DirectionalLight(0xffffff, 0.6));
-
-      // Setup camera
-      const camera = new THREE.PerspectiveCamera();
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      camera.position.z = 500;
-      camera.fov = 50;
-      camera.updateProjectionMatrix();  
-      // console.log(camera.fov);
-
-      // Add camera controls
-      const oControls = new THREE.OrbitControls(camera, renderer.domElement);
-      oControls.minDistance = 130;
-      oControls.maxDistance = 300;
-      oControls.rotateSpeed = .25;
-      oControls.zoomSpeed = .4;
-      oControls.enablePan = false;
-      oControls.screenSpacePanning = true;
-      oControls.enableDamping = true;
-      oControls.dampingFactor = .15; // 0-1, 1 means no easing
-      // oControls.dynamicDampingFactor = 1;
-
-                   
-
-      // Move albums, appearing based on rotation
-      // Might make sense to merge this loop with renderer loop animate()?
-      (function moveAlbums() {
-        cameraVector = new THREE.Vector3(camera.position.x, camera.position.y, camera.position.z);
-        cameraLatLong = Globe.toGeoCoords(camera.position);
-        cameraPositionOnGlobe = Globe.getCoords(cameraLatLong.lat, cameraLatLong.lng);
-        cameraOnGlobeVector = new THREE.Vector3(cameraPositionOnGlobe.x, cameraPositionOnGlobe.y, cameraPositionOnGlobe.z);
-        zoomLevel = cameraVector.distanceTo(new THREE.Vector3(0, 0, 0));
-
-        // Loop through albums
-        albumObjectData.forEach(function (album) {
-          albumCoords = Globe.getCoords(album.lat, album.lng);
-          albumVector = new THREE.Vector3(albumCoords.x, albumCoords.y, albumCoords.z);
-
-          distance = cameraOnGlobeVector.distanceTo(albumVector);
-
-          // Make albums appear when within center of screen
-          maxHeight = .25;
-          falloff = 1.0025; //closer to one means more albums are visible
-          album.alt = maxHeight * (Math.pow(falloff, -distance * distance)) - .1;
-          // album.alt += maxHeight / 6 * (Math.pow(falloff * 1.1, -distance * distance)); //add extra height for center album
-
-          // Make albums bigger when zoomed out, and tiny when appearing
-          album.width = Math.max(1, zoomLevel * zoomLevel * album.alt * .002);
-        });
-
-        // Display name of centermost album
-        var highestAlt = Math.max.apply(Math, albumObjectData.map(function (album) { return album.alt; }));                
-        centerAlbum = albumObjectData.find(function (album) { return album.alt == highestAlt; });
-        var countryNameDiv = document.querySelector('.center-country');
-        if (centerAlbum && countryNameDiv.innerText != centerAlbum.name && !openedByClicking) { document.querySelector('.center-country').innerText = centerAlbum.name; }
-
-        // Hide interface if no album is visible
-        let interface = document.querySelector(".bottom-text")
-        if (highestAlt < 0.01 && document.querySelector(".album-info").style.display == 'none') {
-          interface.style.display = 'none'
-        } else {
-          interface.style.display = 'flex';
-        }
-
-        Globe.customLayerData(Globe.customLayerData());
-        requestAnimationFrame(moveAlbums);
-      })();
-
-      // Kick-off renderer loop
-      (function animate() { // IIFE
-        // Frame cycle
-        oControls.rotateSpeed = .000006 * Math.pow(oControls.getDistance(), 2); //rotate slower when zoomed in, rotate faster when zoomed out
-        // console.log(oControls.rotateSpeed);
-        oControls.update();
-        renderer.render(scene, camera);
-        requestAnimationFrame(animate);
-      })();
-
-      // Add button eventlisteners
-
-      // Open Button
-      document.querySelector('.open-button').addEventListener('click', function () {
-        openInfo(centerAlbum, false);
-      });
-
-      // Close Button
-      document.querySelector('.close-button').addEventListener('click', function () {
-        closeInfo();
-      });
-
-      // Also close info when clicking in the background
-      document.querySelector('canvas').addEventListener('mousedown', function (e) {
-        if (e.target == e.currentTarget) {
+        // Close Button
+        document.querySelector('.close-button').addEventListener('click', function () {
           closeInfo();
-        }
-      });
-      document.querySelector('canvas').addEventListener('touchend', function (e) {
-        if (e.target == e.currentTarget) {
-          closeInfo();
-        }
-      });
-
-      // Play Button
-      document.querySelector('.play-button').addEventListener('click', function () {
-        // Start playing the album by passing the album URI to the player
-        // Issue: This could be much cleaner if it didn't have to search for the country name in the array
-        var country_name = document.querySelector('.center-country').innerText;
-        var albumInfo = albumObjectData.find(function (albumInfo) { return albumInfo.name == country_name; });
-        document.querySelector('.now-playing-album').innerText = albumInfo.album_title + " from " + albumInfo.name;
-        console.log("trying to play ", albumInfo.album_title, " from ", country_name);
-        playAlbum({
-          playerInstance: player,
-          spotify_uri: "spotify:album:" + albumInfo.uri,
         });
-        document.querySelector('.play-button').style.display = 'none';
-        document.querySelector('.pause-button').style.display = 'flex';
-        isPlaying = true;
-      });   
 
-      //Pause Button
-      document.querySelector('.pause-button').addEventListener('click', function () {
-        // Pause playback
-        pause({
-          playerInstance: player,
+        // Also close info when clicking in the background
+        document.querySelector('canvas').addEventListener('mouseup', function (e) {
+          if (e.target == e.currentTarget) {
+            closeInfo();
+          }
         });
-        document.querySelector('.pause-button').style.display = 'none';
-        if (document.querySelector('.album-info').style.display == 'flex') {
+        document.querySelector('canvas').addEventListener('touchend', function (e) {
+          if (e.target == e.currentTarget) {
+            closeInfo();
+          }
+        });
+
+        // Play Button
+        document.querySelector('.play-button').addEventListener('click', function () {
+          // Start playing the album by passing the album URI to the player
+          // Issue: This could be much cleaner if it didn't have to search for the country name in the array
+          var country_name = document.querySelector('.center-country').innerText;
+          var albumInfo = albumObjectData.find(function (albumInfo) { return albumInfo.name == country_name; });
+          document.querySelector('.now-playing-album').innerText = albumInfo.album_title + " from " + albumInfo.name;
+          console.log("trying to play ", albumInfo.album_title, " from ", country_name);
+          playAlbum({
+            playerInstance: player,
+            spotify_uri: "spotify:album:" + albumInfo.uri,
+          });
           document.querySelector('.play-button').style.display = 'none';
-        } else {
-          document.querySelector('.play-button').style.display = 'none';
-        }
-        // hide now playing album
-        document.querySelector('.now-playing-wrapper').style.display = "none";
-        isPlaying = false;
-      });
-
-      // Implementing oncustomobject click functionality from globe.gl manually
-      function getPointerpos(e) {
-        // calculate pointer position in normalized device coordinates, (-1 to +1) for both components
-        if (e.type == 'touchstart' || e.type == 'touchmove' || e.type == 'touchend' || e.type == 'touchcancel') {
-          var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
-          x = touch.pageX;
-          y = touch.pageY;
-        } else if (e.type == 'mousedown' || e.type == 'mouseup' || e.type == 'mousemove' || e.type == 'mouseover' || e.type == 'mouseout' || e.type == 'mouseenter' || e.type == 'mouseleave') {
-          x = e.clientX;
-          y = e.clientY;
-        }
-        pointer.x = (x / window.innerWidth) * 2 - 1;
-        pointer.y = - (y / window.innerHeight) * 2 + 1;
-
-        console.log(pointer.x, pointer.y);
-      }
-
-      let pointerPos = {};
-      let pointerPosNew = {};
-
-      window.addEventListener('mousedown', (e) => { getStartPos(e); })
-      window.addEventListener('touchstart', (e) => { getStartPos(e); })
-
-      function getStartPos(e) {
-        getPointerpos(e);
-        // get mouse position on mousedown
-        pointerPos.x = pointer.x;
-        pointerPos.y = pointer.y;
-      }
-
-      window.addEventListener('mouseup', (e) => { getEndPosOpenAlbum(e); });
-      window.addEventListener('touchend', (e) => { getEndPosOpenAlbum(e); });
-
-      function getEndPosOpenAlbum(e) {
-        getPointerpos(e);
-        // get mouse position on mouseup
-        pointerPosNew.x = pointer.x;
-        pointerPosNew.y = pointer.y;
-        // calc the difference between the two positions
-        var diffX = pointerPosNew.x - pointerPos.x;
-        var diffY = pointerPosNew.y - pointerPos.y;
-        // check if difference is greater than threshold
-        if (Math.abs(diffX) > 0.01 || Math.abs(diffY) > 0.01) {
-          // if so, this is a drag, so we don't want to do anything
-          return;
-        }
-
-        // else, this is a click, so we want to check if we clicked on a custom object
-        var raycaster = new THREE.Raycaster();
-        raycaster.setFromCamera(pointer, camera);
-        console.log(pointer);
-        var intersects = raycaster.intersectObjects(scene.children[0].children[0].children[12].children, true); //array
-        // console.log(scene.children[0].children[0].children[12].children);
-        // get the first object that was clicked on and open the info
-        if (intersects.length > 0) {
-          var clickedAlbum = intersects[0].object.__data;
-          openInfo(clickedAlbum, true);
-        }
-      }
-
-      // Open Overlay with album info
-      function openInfo(album, clicked) {
-        if (clicked) { openedByClicking = true; } 
-        if (album) {
-          document.querySelector('.album-art-image').src = 'data/spotify_album_covers/' + album.imageUrl;
-          document.querySelector('.album-title').innerText = album.album_title;
-          document.querySelector('.album-artist').innerText = album.album_artist;
-          document.querySelector('.album-releasedate').innerText = album.album_releasedate;
-          document.querySelector('.album-genres').innerText = Object.values(album.album_genres).join(', ');
-          // document.querySelector('.album-descriptors').innerText = Object.values(album.album_descriptors).join(', ');  
-          var countryNameDiv = document.querySelector('.center-country');
-          if (album && countryNameDiv.innerText != album.name) { document.querySelector('.center-country').innerText = album.name; }
-        }
-        oControls.enabled = false;
-        document.querySelector('.album-info').style.display = 'flex';
-        document.querySelector('.open-button').style.display = 'none';
-        document.querySelector('.pause-button').style.display = 'none';
-        document.querySelector('.close-button').style.display = 'flex';
-        document.querySelector('.play-button').style.display = 'none';
-        document.querySelector('.now-playing-wrapper').style.display = 'none';
-      }
-
-      // Close Overlay with album info
-      function closeInfo() {
-        if (document.querySelector('.now-playing-album').innerText == "" || isPlaying == false) {
-          document.querySelector('.now-playing-wrapper').style.display = 'none';
-        } else {
-          document.querySelector('.now-playing-wrapper').style.display = 'flex';
-        }
-        oControls.enabled = true;
-        openedByClicking = false;
-        document.querySelector('.album-info').style.display = 'none';
-        document.querySelector('.close-button').style.display = 'none';
-        document.querySelector('.play-button').style.display = 'none';
-        document.querySelector('.open-button').style.display = 'flex';
-
-        
-        // Show pause button if currently playing
-        if (isPlaying) {
           document.querySelector('.pause-button').style.display = 'flex';
-        }
-      };
+          isPlaying = true;
+        });
 
-    });
-  })();
+        //Pause Button
+        document.querySelector('.pause-button').addEventListener('click', function () {
+          // Pause playback
+          pause({
+            playerInstance: player,
+          });
+          document.querySelector('.pause-button').style.display = 'none';
+          if (document.querySelector('.album-info').style.display == 'flex') {
+            document.querySelector('.play-button').style.display = 'none';
+          } else {
+            document.querySelector('.play-button').style.display = 'none';
+          }
+          // hide now playing album
+          document.querySelector('.now-playing-wrapper').style.display = "none";
+          isPlaying = false;
+        });
+
+        // Implementing oncustomobject click functionality from globe.gl manually
+        function getPointerpos(e) {
+          // calculate pointer position in normalized device coordinates, (-1 to +1) for both components
+          if (e.type == 'touchstart' || e.type == 'touchmove' || e.type == 'touchend' || e.type == 'touchcancel') {
+            var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
+            x = touch.pageX;
+            y = touch.pageY;
+          } else if (e.type == 'mousedown' || e.type == 'mouseup' || e.type == 'mousemove' || e.type == 'mouseover' || e.type == 'mouseout' || e.type == 'mouseenter' || e.type == 'mouseleave') {
+            x = e.clientX;
+            y = e.clientY;
+          }
+          pointer.x = (x / window.innerWidth) * 2 - 1;
+          pointer.y = - (y / window.innerHeight) * 2 + 1;
+        }
+
+        let pointerPos = {};
+        let pointerPosNew = {};
+
+        window.addEventListener('mousedown', (e) => { getStartPos(e); })
+        window.addEventListener('touchstart', (e) => { getStartPos(e); })
+
+        function getStartPos(e) {
+          getPointerpos(e);
+          // get mouse position on mousedown
+          pointerPos.x = pointer.x;
+          pointerPos.y = pointer.y;
+        }
+
+        window.addEventListener('mouseup', (e) => { getEndPosOpenAlbum(e); });
+        window.addEventListener('touchend', (e) => { getEndPosOpenAlbum(e); });
+
+        function getEndPosOpenAlbum(e) {
+          getPointerpos(e);
+          // get mouse position on mouseup
+          pointerPosNew.x = pointer.x;
+          pointerPosNew.y = pointer.y;
+          // calc the difference between the two positions
+          var diffX = pointerPosNew.x - pointerPos.x;
+          var diffY = pointerPosNew.y - pointerPos.y;
+          // check if difference is greater than threshold
+          if (Math.abs(diffX) > 0.01 || Math.abs(diffY) > 0.01) {
+            // if so, this is a drag, so we don't want to do anything
+            return;
+          }
+
+          // else, this is a click, so we want to check if we clicked on a custom object
+          var raycaster = new THREE.Raycaster();
+          raycaster.setFromCamera(pointer, camera);
+          var intersects = raycaster.intersectObjects(scene.children[0].children[0].children[12].children, true); //array
+          // console.log(scene.children[0].children[0].children[12].children);
+          // get the first object that was clicked on and open the info
+          if (intersects.length > 0) {
+            var clickedAlbum = intersects[0].object.__data;
+            openInfo(clickedAlbum, true);
+          }
+        }
+
+        // Open Overlay with album info
+        function openInfo(album, clicked) {
+          if (clicked) { openedByClicking = true; }
+          if (album) {
+            document.querySelector('.album-art-image').src = 'data/spotify_album_covers/' + album.imageUrl;
+            document.querySelector('.album-title').innerText = album.album_title;
+            document.querySelector('.album-artist').innerText = album.album_artist;
+            document.querySelector('.album-releasedate').innerText = album.album_releasedate;
+            document.querySelector('.album-genres').innerText = Object.values(album.album_genres).join(', ');
+            // document.querySelector('.album-descriptors').innerText = Object.values(album.album_descriptors).join(', ');  
+            var countryNameDiv = document.querySelector('.center-country');
+            if (album && countryNameDiv.innerText != album.name) { document.querySelector('.center-country').innerText = album.name; }
+          }
+          oControls.enabled = false;
+          document.querySelector('.album-info').style.display = 'flex';
+          document.querySelector('.open-button').style.display = 'none';
+          document.querySelector('.pause-button').style.display = 'none';
+          document.querySelector('.close-button').style.display = 'flex';
+          document.querySelector('.play-button').style.display = 'none';
+          document.querySelector('.now-playing-wrapper').style.display = 'none';
+        }
+
+        // Close Overlay with album info
+        function closeInfo() {
+          if (document.querySelector('.now-playing-album').innerText == "" || isPlaying == false) {
+            document.querySelector('.now-playing-wrapper').style.display = 'none';
+          } else {
+            document.querySelector('.now-playing-wrapper').style.display = 'flex';
+          }
+          oControls.enabled = true;
+          openedByClicking = false;
+          document.querySelector('.album-info').style.display = 'none';
+          document.querySelector('.close-button').style.display = 'none';
+          document.querySelector('.play-button').style.display = 'none';
+          document.querySelector('.open-button').style.display = 'flex';
+
+
+          // Show pause button if currently playing
+          if (isPlaying) {
+            document.querySelector('.pause-button').style.display = 'flex';
+          }
+        };
+
+      });
+    })();
 
   // Reload page when window is resized
   // Disabled as it was most likely the cause for the site not to work on some phones
@@ -592,5 +588,5 @@
 
 
 
-</script>
+  </script>
 </body>
