@@ -180,7 +180,7 @@
       display: flex;
       align-items: end;
       text-decoration: underline;
-      text-underline-offset: 0.25rem;
+      text-underline-offset: 0.48rem;
       text-decoration-thickness: 0.4rem;
       cursor: pointer;
     }
@@ -450,7 +450,7 @@
         oControls.enablePan = false;
         oControls.screenSpacePanning = true;
         oControls.enableDamping = true;
-        oControls.dampingFactor = .15; // 0-1, 1 means no easing
+        oControls.dampingFactor = .05; // 0-1, 1 means no easing
         // oControls.dynamicDampingFactor = 1;
 
 
@@ -473,10 +473,9 @@
 
             // Make albums appear when within center of screen
             maxHeight = .25;
-            falloff = 1.004; //closer to one means more albums are visible
-            album.alt = maxHeight * (Math.pow(falloff, -distance * 10)) - .1
-              - (oControls.maxDistance - zoomLevel) / (oControls.minDistance * 35); //show less albums when zoomed in
-            // album.alt += maxHeight / 6 * (Math.pow(falloff * 1.1, -distance * distance)); //add extra height for center album
+            falloff = 1.003; //closer to one means more albums are visible
+            album.alt = maxHeight * (Math.pow(falloff, -distance * 11)) - .1
+              - (oControls.maxDistance - zoomLevel) / (oControls.minDistance * 60); //show less albums when zoomed in
             // Make albums bigger when zoomed out, and tiny when appearing
             album.width = Math.max(1, zoomLevel * zoomLevel * album.alt * .002);
           });
