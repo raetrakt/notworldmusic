@@ -37,6 +37,10 @@
       background-color: black;
     }
 
+    a {
+      color: white;
+    }
+
     .container {
       height: 100vh;
       width: 100vw;
@@ -125,10 +129,14 @@
       display: flex;
       justify-content: flex-end;
       gap: 4rem;
-      pointer-events: auto;
+      pointer-events: none;
       user-select: none;
       margin-top: auto;
       filter: drop-shadow(0px 7px 30px rgba(0, 0, 0, 0.8));
+    }
+
+    .bottom-text * {
+      pointer-events: auto;
     }
 
     .about {
@@ -240,7 +248,7 @@
       .about-page {
         overflow: scroll;
         -webkit-overflow-scrolling: touch;
-      }
+              }
 
       .about-text {
         font-size: .9rem;
@@ -307,7 +315,7 @@
         <p>How were the albums selected?</p>
         <p>Each album represents the best rated album of artists from that country according to the community at
           rateyourmusic.com.</p>
-
+        <p>A project by <a href="http://www.pitzer.xyz" target="_blank" rel="noopener noreferrer">Fabian Pitzer</a></p>
       </div>
     </div>
     <div class="bottom-text">
@@ -516,7 +524,7 @@
           document.querySelector('.close-button').style.display = 'flex';
           document.querySelector('.open-button').style.display = 'none';
           document.querySelector('.center-country').style.display = 'none';
-        })
+                  })
 
         // Open Button
         document.querySelector('.open-button').addEventListener('click', function () {
